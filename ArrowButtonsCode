@@ -1,1 +1,102 @@
-hihi
+(function(){
+alert("hi kayla");
+var styles = `
+#keys *{
+  width:3vw;
+  height:3vw;
+  background-color:red;
+  position:absolute;
+}
+#up{
+  top:0.5vw;
+  left:4vw;
+}
+#left{
+  top:4vw;
+  left:0.5vw;
+}
+#down{
+  top:4vw;
+  left:4vw;
+}
+#right{
+  top:4vw;
+  left:7.5vw;
+}
+#keys{
+  background-color:blue;
+  position:fixed;
+  width:11vw;
+  height:7.5vw;
+  bottom:0vw;
+  left:0vw;
+}
+`;
+//adds css
+var styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
+
+
+
+//adds html
+var arrowDirections = ["left","up","right","down"];
+var keys = document.createElement("DIV");
+keys.attr('id', 'keys');
+for(let i = 0; i<arrowDirections.length;i++){
+	var arrow = document.createElement("DIV");
+	arrow.className = arrowDirections[i];
+	keys.appendChild(arrow);
+}
+
+
+
+
+//adds javascript
+
+function onMouseDown(e){
+  e.data.k.css("background-color", "green");
+  $(window).trigger({ type: "keydown", which: e.data.kc });
+}
+function onMouseUp(e){
+  e.data.k.css("background-color", "red");
+  $(window).trigger({ type: "keyup", which: e.data.kc });
+}
+
+
+var keys = [$("#left"), $("#up"), $("#right"), $("#down")];
+for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var keyCode = 37 + i;
+    key.on("mousedown", {k:key,kc:keyCode}, onMouseDown);
+    key.on("mouseup", {k:key,kc:keyCode}, onMouseUp);
+}
+
+
+$(window).on("mouseup", function() {
+  $("#keys").trigger("mouseup");
+});
+function handle_mousedown(e) {
+  window.my_dragging = {};
+  my_dragging.pageX0 = e.pageX;
+  my_dragging.pageY0 = e.pageY;
+  my_dragging.elem = this;
+  my_dragging.offset0 = $(this).offset();
+  function handle_dragging(e) {
+    var left = my_dragging.offset0.left + (e.pageX - my_dragging.pageX0);
+    var top = my_dragging.offset0.top + (e.pageY - my_dragging.pageY0);
+    $(my_dragging.elem).offset({ top: top, left: left });
+  }
+  function handle_mouseup(e) {
+    $("body")
+      .off("mousemove", handle_dragging)
+      .off("mouseup", handle_mouseup);
+  }
+  $("body")
+    .on("mouseup", handle_mouseup)
+    .on("mousemove", handle_dragging);
+}
+$("#keys").mousedown(handle_mousedown);
+
+})();
